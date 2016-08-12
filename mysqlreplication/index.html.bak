@@ -1,0 +1,114 @@
+!doctype html>
+<html lang="en">    
+<head>
+    <meta charset="utf-8">
+    <title>Reveal.js 3 Slide Demo</title>
+    <link rel="stylesheet" href="css/reveal.min.css">
+    <link rel="stylesheet" href="css/theme/default.css" id="theme">    
+    <!--Add support for earlier versions of Internet Explorer -->
+    <!--[if lt IE 9]>
+    <script src="lib/js/html5shiv.js"></script>
+    <![endif]-->
+</head>
+ 
+<body>
+    <!-- Wrap the entire slide show in a div using the "reveal" class. -->
+    <div class="reveal">
+
+
+<div class="slides">
+    <section data-background-image="https://s3.amazonaws.com/media-p.slid.es/uploads/mckraken/images/436688/bckgrnd.png" data-id="7df862e05ed906548cf8f2b68f88cbc6" class="">
+	<h1>Fixing MySQL Replication</h1>
+	<p>(Without all the downtime)</p>
+    </section>
+    <section data-background-image="https://s3.amazonaws.com/media-p.slid.es/uploads/mckraken/images/436688/bckgrnd.png" data-id="7df862e05ed906548cf8f2b68f88cbc6" class="">
+    <!-- <section data-background-image="https://s3.amazonaws.com/media-p.slid.es/uploads/mckraken/images/436690/bckgrnd.png" data-id="3b8c4bf78da62c6efa0a7fbec7c7985a" class=""> -->
+	<h2>MySQL Replication</h2>
+	    <ul>
+    		<li data-fragment-index="0" class="fragment">Uni-directional - <u>Always</u> from master to slave</li>
+    		<li data-fragment-index="1" class="fragment">Asynchronous - Initiated from the slave requesting <br>from the master</li>
+	    </ul> 
+            <p data-fragment-index="2" class="fragment">
+            <img style="width: 713.451px; height: 325.141px; max-height: none; max-width: none;" src="http://scriptingmysql.com/scriptingmysql/mysql_replication_topology_threads.png">
+            </p>
+
+    </section>
+    <section data-background-image="https://s3.amazonaws.com/media-p.slid.es/uploads/mckraken/images/436688/bckgrnd.png" data-id="7df862e05ed906548cf8f2b68f88cbc6" class="">
+    <!-- <section data-background-image="https://s3.amazonaws.com/media-p.slid.es/uploads/mckraken/images/436692/bckgrnd.png" data-id="b2c5ba3380077ca815057d4a7d9e6a6c" class=""> -->
+	<h2>Replication Overview</h2>
+	    <ul>
+		<li data-fragment-index="0" class="fragment">Each server needs a unique, non-zero server-id<br> number in the replication group.</li>
+		<li data-fragment-index="1" class="fragment">Master writes to binlog</li>
+		<li data-fragment-index="2" class="fragment">Slave polls master with I/O thread reading binlog<br>and writing relay-log</li>
+		<li data-fragment-index="3" class="fragment">Slave SQL thread reads and applies relay-log</li>
+	    </ul>
+    </section>
+    <section data-background-image="https://s3.amazonaws.com/media-p.slid.es/uploads/mckraken/images/436688/bckgrnd.png" data-id="7df862e05ed906548cf8f2b68f88cbc6" class="">
+    <!-- <section data-background-image="https://s3.amazonaws.com/media-p.slid.es/uploads/mckraken/images/436712/bckgrnd.png" data-id="0c7f21b21dbaac5f84bf9ea004c98513" class=""> -->
+        <h2>Replication Troubleshooting</h2>
+            <ul>
+                <li data-fragment-index="0" class="fragment">Slave disconnected long enough for master binlog<br>to be deleted</li>
+                <li data-fragment-index="1" class="fragment">Slave not in read-only and writes applied to slave</li>
+                <li data-fragment-index="2" class="fragment">Slave in read-only mode, but root user can override</li>
+                <li data-fragment-index="3" class="fragment">Others?  <a href=mailto:steve.mccracken@rackspace.com>steve.mccracken@rackspace.com</a></li>
+                <li data-fragment-index="3" class="fragment">Murphy!</li>
+            </ul>
+    </section>
+    <section data-background-image="https://s3.amazonaws.com/media-p.slid.es/uploads/mckraken/images/436688/bckgrnd.png" data-id="7df862e05ed906548cf8f2b68f88cbc6" class="">
+	<h2>Installing Percona Tools</h2>
+	<section>
+	   <h3>CentOS/RHEL</h3>
+      <script type="text/template">
+	      <pre><code>
+		yum install \
+	        http://www.percona.com/downloads/percona-release/percona-release-0.0-1.x86_64.rpm
+		yum search percona
+		yum install percona-xtrabackup percona-toolkit
+	      </code></pre>
+            </script>
+	</section>
+	<section>
+	   <h3>Debian/Ubuntu</h3>
+<!--	      <section data-markdown>  -->
+      <script type="text/template">
+	      <pre><code>
+		apt-key adv --keyserver keys.gnupg.net --recv-keys 1C4CBDCDCD2EFD2A
+		
+	        export VERSION="trusty"
+		export VERSION="precise"
+	      
+		echo "deb http://repo.percona.com/apt $VERSION main" &gt;&gt; \
+	        /etc/apt/sources.list.d/percona.list
+
+		echo "deb-src http://repo.percona.com/apt $VERSION main" &gt;&gt; \
+	        /etc/apt/sources.list.d/percona.list
+	      
+		aptitude update
+		aptitude search percona
+		aptitude install percona-xtrabackup percona-toolkit
+	      </code></pre>
+	</section>
+            </script>
+<!--              </section>  -->
+    </section>
+    </div>
+
+    </div>
+    <script src="lib/js/head.min.js"></script>
+    <script src="js/reveal.min.js"></script>
+ 
+    <script>
+        // Required, even if empty.
+        Reveal.initialize({
+dependencies: [
+					{ src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: 'plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+					{ src: 'plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
+				]
+        });
+    </script>
+</body>
+</html>

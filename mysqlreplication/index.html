@@ -1,0 +1,430 @@
+<!doctype html>
+<html lang="en">    
+<head>
+    <meta charset="utf-8">
+    <title>McKraken Training -- MySQL Replication with Percona Tools</title>
+    <link rel="stylesheet" href="css/reveal.min.css">
+    <link rel="stylesheet" href="css/theme/default.css" id="theme">    
+    <!--Add support for earlier versions of Internet Explorer -->
+    <!--[if lt IE 9]>
+    <script src="lib/js/html5shiv.js"></script>
+    <![endif]-->
+</head>
+ 
+<body>
+    <!-- Wrap the entire slide show in a div using the "reveal" class. -->
+    <div class="reveal">
+
+<div class="slides">
+    <section data-background-image="https://s3.amazonaws.com/media-p.slid.es/uploads/mckraken/images/436688/bckgrnd.png" data-id="7df862e05ed906548cf8f2b68f88cbc6" class="">
+	<h1>Fixing MySQL Replication</h1>
+	<p>(Without all the downtime)</p>
+    </section>
+    <section data-background-image="https://s3.amazonaws.com/media-p.slid.es/uploads/mckraken/images/436688/bckgrnd.png" data-id="7df862e05ed906548cf8f2b68f88cbc6" class="">
+	<h2>MySQL Replication</h2>
+	    <ul>
+    		<li data-fragment-index="0" class="fragment">Uni-directional - <u>Always</u> from master to slave</li>
+    		<li data-fragment-index="1" class="fragment">Asynchronous - Initiated from the slave requesting <br>from the master</li>
+	    </ul> 
+            <p data-fragment-index="2" class="fragment">
+            <img style="width: 713.451px; height: 325.141px; max-height: none; max-width: none;" src="http://scriptingmysql.com/scriptingmysql/mysql_replication_topology_threads.png">
+            </p>
+
+    </section>
+    <section data-background-image="https://s3.amazonaws.com/media-p.slid.es/uploads/mckraken/images/436688/bckgrnd.png" data-id="7df862e05ed906548cf8f2b68f88cbc6" class="">
+    <section>
+	<h2>Replication Overview</h2>
+	    <ul>
+		<li data-fragment-index="0" class="fragment">Each server needs a unique, non-zero server-id<br> number in the replication group.</li>
+		<li data-fragment-index="1" class="fragment">Master writes to binlog</li>
+		<li data-fragment-index="2" class="fragment">Slave polls master with I/O thread reading binlog<br>and writing relay-log</li>
+		<li data-fragment-index="3" class="fragment">Slave SQL thread reads and applies relay-log</li>
+	    </ul>
+    </section>
+    <section>
+	<h2>Replication Overview</h2>
+		<p>Q: What makes a "Master"?</p>
+		<p data-fragment-index="0" class="fragment">A: It writes a binary log.</p>
+    </section>
+    </section>
+    <section data-background-image="https://s3.amazonaws.com/media-p.slid.es/uploads/mckraken/images/436688/bckgrnd.png" data-id="7df862e05ed906548cf8f2b68f88cbc6" class="">
+        <h2>Replication Troubleshooting</h2>
+            <ul>
+                <li data-fragment-index="0" class="fragment">Slave disconnected long enough for master binlog<br>to be deleted</li>
+                <li data-fragment-index="1" class="fragment">Slave not "read-only" and writes applied to slave</li>
+                <li data-fragment-index="2" class="fragment">Slave in read-only mode, but SUPER user overrides</li>
+                <li data-fragment-index="3" class="fragment">Murphy!</li>
+                <li data-fragment-index="3" class="fragment">Others?  <a href=mailto:steve.mccracken@rackspace.com>steve.mccracken@rackspace.com</a></li>
+            </ul>
+    </section>
+
+
+
+ <section  data-background-image="https://s3.amazonaws.com/media-p.slid.es/uploads/mckraken/images/436688/bckgrnd.png" data-id="843e170d99a08ec0409901ecca3eda50" class="">
+<section>
+            <h2>Installing Percona Tools</h2>
+</section>
+<section>
+            <h2>Installing Percona Tools</h2>
+<h3>CentOS/RHEL</h3>
+<pre><code style="font-size:24px;">yum install \
+http://www.percona.com/downloads/percona-release/percona-release-0.0-1.x86_64.rpm
+yum search percona
+yum -y install percona-xtrabackup percona-toolkit </code></pre>
+</section>
+<section>
+            <h2>Installing Percona Tools</h2>
+<h3>Debian/Ubuntu</h3>
+<pre><code style="font-size:24px;">apt-key adv --keyserver keys.gnupg.net --recv-keys 1C4CBDCDCD2EFD2A
+
+export VERSION="trusty" # For Ubuntu 14.04
+export VERSION="precise" # For Ubuntu 12.04
+export VERSION="wheezy" # For Debian 7
+
+echo "deb http://repo.percona.com/apt $VERSION main" &gt;&gt; \
+/etc/apt/sources.list.d/percona.list
+echo "deb-src http://repo.percona.com/apt $VERSION main" &gt;&gt; \
+/etc/apt/sources.list.d/percona.list
+
+aptitude update
+aptitude search percona
+aptitude -y install percona-xtrabackup percona-toolkit </code></pre>
+</section>
+</section>
+
+
+   <section data-background-image="https://s3.amazonaws.com/media-p.slid.es/uploads/mckraken/images/436688/bckgrnd.png" data-id="7df862e05ed906548cf8f2b68f88cbc6" class="">
+<section>
+      <h2>Prerequisite: SSH key login</h2>
+</section>
+<section>
+      <h2>Prerequisite: SSH key login</h2>
+         <h3>DB-Master</h3>
+<pre data-fragment-index="0" class="fragment"><code style="font-size:24px;">
+cat ~/.ssh/id_rsa.pub
+#
+# If it doesn't exist, then use "ssh-keygen".
+#</code></pre>
+</section>
+<section>
+      <h2>Prerequisite: SSH key login</h2>
+         <h3>DB-Slave</h3>
+<pre data-fragment-index="1" class="fragment"><code style="font-size:24px;">
+ls -al ~/.ssh
+#
+# If the directory doesn't exist, an easy way to create it with
+# the correct permissions is to use "ssh-keygen".
+# Paste the output of the DB-Master id_rsa.pub file in the
+# "authorized_keys" file.
+#
+vi ~/.ssh/authorized_keys
+chmod 600 ~/.ssh/authorized_keys
+</code></pre>
+</section>
+   </section>
+
+
+   <section data-background-image="https://s3.amazonaws.com/media-p.slid.es/uploads/mckraken/images/436688/bckgrnd.png" data-id="7df862e05ed906548cf8f2b68f88cbc6" class="">
+<section>
+      <h2>Setting Up Replication (Again?)</h2>
+         <h3>Use "df" or "du" to check for disk space!</h3>
+</section>
+<section>
+      <h2>Setting Up Replication (Again?)</h2>
+         <h3>my.cnf</h3>
+<ul>
+<li>DB-Master <pre><code data-fragment-index="0" class="fragment" style="font-size:24px;">serverid = &lt;unique N&gt; # Not larger than 4294967295
+log-bin = /var/lib/mysql/db0-bin-log
+expire-logs-days = 5 # Adjust as needed</code><!-- <code data-fragment-index="1" class="fragment" style="font-size:18px;">
+# The following two options are recommended for data
+# integrity, but have a performance penalty.
+innodb_flush_log_at_trx_commit=1 # default
+sync_binlog=1 # syncs logs to disk after every write
+</code> --> </pre>
+<li>DB-Slave <pre><code data-fragment-index="2" class="fragment" style="font-size:24px;">serverid = &lt;unique N&gt; # Not larger than 4294967295
+relay-log=/var/lib/mysql/db1-relay-log
+relay-log-space-limit = 4G
+read-only=1</code><code data-fragment-index="3" class="fragment" style="font-size:24px;">
+# Add these in too!
+log-bin = /var/lib/mysql/db1-bin-log
+expire-logs-days = 5 # Adjust as needed
+</code> </pre>
+</ul>
+</section>
+<section>
+      <h2>Setting Up Replication (Again?)</h2>
+         <h3>Replicant User Information Is Not Available</h3>
+            <h4>DB-Master</h4>
+<ul>
+<li>If the replicant user is not created:<pre><code data-fragment-index="0" class="fragment" style="font-size:24px;">
+GRANT REPLICATION SLAVE ON *.* TO 'replicant'@'10.x.x.x'
+    IDENTIFIED BY 'GoodPassword';</code> </pre>
+<li>If the replicant user password is not known:<pre><code data-fragment-index="1" class="fragment" style="font-size:24px;">
+UPDATE mysql.user SET Password=PASSWORD('GoodPassword')
+    WHERE User='replicant' AND Host='10.x.x.x';
+FLUSH PRIVILEGES; </code> </pre>
+</ul>
+</section>
+<section>
+      <h2>Setting Up Replication (Again?)</h2>
+         <h3>DB-Master</h3>
+         <h4>Use "df" or "du" to check for disk space!</h4>
+<ol>
+<li data-fragment-index="0" class="fragment"><pre><code style="font-size:24px;">mkdir /home/rack/percbak</code></pre></li>
+<li data-fragment-index="1" class="fragment"><pre><code style="font-size:24px;">innobackupex /home/rack/percbak
+.
+.
+.
+innobackupex: completed OK!</code></pre></li>
+<li data-fragment-index="2" class="fragment"><pre><code style="font-size:24px;">innobackupex --apply-log /home/rack/percbak/&lt;TIMESTAMP&gt;
+.
+.
+.
+innobackupex: completed OK!</code></pre></li>
+<li data-fragment-index="3" class="fragment"><pre><code style="font-size:24px;">rsync -av --progress /home/rack/percbak 10.x.x.x:/home/rack</code></pre></li>
+</ol>
+</section>
+<section>
+      <h2>Setting Up Replication (Again?)</h2>
+         <h3>DB-Slave</h3>
+<ol>
+<li data-fragment-index="0" class="fragment"><pre><code style="font-size:24px;"># Note: "mv" may need to change if mounted differently.
+service mysqld stop &amp;&amp; \
+mv /var/lib/mysql /var/lib/mysql.old &amp;&amp; \
+mv /home/rack/percbak/&lt;TIMESTAMP&gt; /var/lib/mysql &amp;&amp; \ 
+chown -R mysql:mysql /var/lib/mysql &amp;&amp; \
+service mysqld start &amp;&amp; \
+mysql -e "stop slave; reset slave;"
+</code></pre></li>
+<li data-fragment-index="1" class="fragment"><pre><code style="font-size:24px;">cat /var/lib/mysql/xtrabackup_binlog_info
+bin-log.000023	503645117 </code></pre></li>
+<li data-fragment-index="2" class="fragment"><pre><code style="font-size:24px;"># Note: use values above for FILE &amp; POS.
+mysql -e " CHANGE MASTER TO
+MASTER_HOST='10.x.x.x',
+MASTER_USER='replicant',
+MASTER_PASSWORD='GoodPassword',
+MASTER_LOG_FILE='bin-log.000023',
+MASTER_LOG_POS=503645117 ; " </code></pre></li>
+<li data-fragment-index="3" class="fragment"><pre><code style="font-size:24px;">mysql -e "start slave;"</code></pre></li>
+<li data-fragment-index="4" class="fragment"><pre><code style="font-size:24px;">mysql -e "show slave status\G"</code></pre></li>
+</ol>
+</section>
+<section>
+      <h2>Setting Up Replication (Again?)</h2>
+         <h3>Cleanup: DB-Master</h3>
+<pre data-fragment-index="0" class="fragment"><code style="font-size:24px;">
+/bin/rm -r /home/rack/percbak
+</code></pre>
+</section>
+<section>
+      <h2>Setting Up Replication (Again?)</h2>
+         <h3>Cleanup: DB-Slave</h3>
+<pre data-fragment-index="1" class="fragment"><code style="font-size:24px;">
+cd /home/rack
+tar -cvjf mysql.olddatadir.$(date +%Y%m%d-%H%M%S).tbz /var/lib/mysql.old
+/bin/rm -r /var/lib/mysql.old
+/bin/rm -r /home/rack/percbak
+</code></pre>
+</section>
+   </section>
+
+
+   <section data-background-image="https://s3.amazonaws.com/media-p.slid.es/uploads/mckraken/images/436688/bckgrnd.png" data-id="7df862e05ed906548cf8f2b68f88cbc6" class="">
+<section>
+      <h2>Fixing or Checking Replication</h2>
+</section>
+<section>
+      <h2>Fixing or Checking Replication</h2>
+         <h3>Prerequisites</h3>
+<ul>
+<li>Replication needs to be running and working<br>(even if broken--how's that for a contradiction?)</li>
+<li>How is that possible?
+<ul>
+<li data-fragment-index="0" class="fragment" >Skipping over errors: <pre><code data-fragment-index="1" class="fragment" style="font-size:24px;">
+SET GLOBAL SQL_SLAVE_SKIP_COUNTER=N;
+START SLAVE; </code> </pre></li>
+<li data-fragment-index="2" class="fragment" >Resetting Master Log Position <pre><code data-fragment-index="3" class="fragment" style="font-size:24px;">
+# On db-master:
+mysql -e "show master status;"
+
+# On db-slave:
+STOP SLAVE;
+CHANGE MASTER TO MASTER_LOG_FILE='&lt;file-name&gt;',
+    MASTER_LOG_POS=&lt;file-position&gt;  ;
+START SLAVE;
+</code> </pre></li>
+</ul>
+</ul>
+</section>
+<section>
+      <h2>Fixing or Checking Replication</h2>
+         <h3>On DB-Master</h3>
+<ol>
+<li data-fragment-index="0" class="fragment"><pre><code style="font-size:24px;">mysql&gt; GRANT ALL ON *.* TO 'checksumusr'@'%' IDENTIFIED BY 'SecretPassword';</code></pre></li>
+<li data-fragment-index="1" class="fragment"><pre><code style="font-size:24px;"># Compute checksums to find differences
+pt-table-checksum -h localhost -u checksumusr \
+-pSecretPassword --create-replicate-table --replicate percona.checksums </code></pre></li>
+<li data-fragment-index="2" class="fragment"><pre><code style="font-size:24px;"># Display differences
+pt-table-sync -uchecksumusr -pSecretPassword \
+--print --replicate percona.checksums localhost </code></pre></li>
+<li data-fragment-index="3" class="fragment"><pre><code style="font-size:24px;"># Apply corrections
+pt-table-sync -uchecksumusr -pSecretPassword \
+--execute --replicate percona.checksums localhost</code></pre></li>
+</ol>
+</section>
+<section>
+      <h2>Fixing or Checking Replication</h2>
+         <h3>Cleanup: DB-Master</h3>
+<ol>
+<li data-fragment-index="0" class="fragment"><pre><code style="font-size:24px;">mysql&gt; DROP USER 'checksumusr'; </code></pre></li>
+<li data-fragment-index="1" class="fragment"><pre><code style="font-size:24px;">mysql&gt; DROP DATABASE percona </code></pre></li>
+</ol>
+</section>
+   </section>
+
+
+   <section data-background-image="https://s3.amazonaws.com/media-p.slid.es/uploads/mckraken/images/436688/bckgrnd.png" data-id="7df862e05ed906548cf8f2b68f88cbc6" class="">
+<section>
+      <h2>Set Up Monitoring</h2>
+         <h3>DB-Slave</h3>
+</section>
+<section>
+      <h2>Set Up Monitoring</h2>
+         <h3>DB-Slave</h3>
+         <h4>(careful the line wrapping)</h4>
+<pre><code data-fragment-index="1" class="fragment" style="font-size:24px;">
+cd /usr/lib/rackspace-monitoring-agent/plugins
+
+wget https://raw.github.com/racker/rackspace-monitoring-
+	agent-plugins-contrib/master/mysql_replication.py
+
+chmod +x mysql_replication.py
+</code></pre>
+</section>
+<section>
+      <h2>Set Up Monitoring</h2>
+         <h3>Get the Entity ID</h3>
+<pre data-fragment-index="1" class="fragment"><code style="font-size:24px;">
+#
+# raxmon
+# https://github.com/racker/rackspace-monitoring-cli 
+# sudo pip install rackspace-monitoring-cli
+#
+export USERNAME=
+export APIKEY=
+
+raxmon-entities-list \
+	--username=$USERNAME \
+	--api-key=$APIKEY
+
+export SERVER_ENTITY_ID=
+</code></pre>
+</section>
+<section>
+      <h2>Set Up Monitoring</h2>
+         <h3>Create the check</h3>
+<pre data-fragment-index="1" class="fragment"><code style="font-size:24px;">
+#
+# raxmon
+# https://github.com/racker/rackspace-monitoring-cli 
+# sudo pip install rackspace-monitoring-cli
+#
+raxmon-checks-create --entity-id=$SERVER_ENTITY_ID  \
+	--label="MySQL Replication" \
+	--type=agent.plugin \
+	--username=$USERNAME \
+	--api-key=$APIKEY \
+	--details=file=mysql_replication.py
+
+export CHECK_ID=
+</code></pre>
+</section>
+<section>
+      <h2>Set Up Monitoring</h2>
+         <h3>Create the Alarm</h3>
+<pre data-fragment-index="1" class="fragment"><code style="font-size:24px;">
+#
+# raxmon
+# https://github.com/racker/rackspace-monitoring-cli 
+# sudo pip install rackspace-monitoring-cli
+#
+raxmon-alarms-create --username=$USERNAME \
+	--api-key=$APIKEY \
+	--entity-id=$SERVER_ENTITY_ID \
+	--check-id=$CHECK_ID \
+	--label="MySQL Slave Status" \
+	--criteria="if (metric['SLAVE_STATUS'] != 'ONLINE') { 
+	return new AlarmStatus(CRITICAL, 'MySQL Replication is OFFLINE.'); 
+	} 
+	if (metric['SLAVE_STATUS'] == 'ONLINE' && metric['SECONDS_BEHIND_MASTER'] >= 1800) { 
+	return new AlarmStatus(CRITICAL, 'MySQL Replication ONLINE - slave behind master.'); 
+	}" \
+ 	--notification-plan-id=npManaged
+</code></pre>
+</section>
+   </section>
+
+   <section data-background-image="https://s3.amazonaws.com/media-p.slid.es/uploads/mckraken/images/436688/bckgrnd.png" data-id="7df862e05ed906548cf8f2b68f88cbc6" class="">
+<section>
+      <h2>Promote Slave to Master</h2>
+            <h3>DB-Master Dies Or Is Shutdown</h3>
+</section>
+<section>
+
+      <h2>Promote Slave to Master</h2>
+            <ul>
+         <h4  data-fragment-index="0" class="fragment">All Slaves</h4>
+		<li data-fragment-index="1" class="fragment"><pre><code style="font-size:24px;">mysql -e "STOP SLAVE IO_THREAD;" </code></pre></li>
+		<li data-fragment-index="2" class="fragment"><pre><code style="font-size:24px;">mysql -e "SHOW PROCESSLIST;" | grep -i "has read all relay log" </code></pre></li>
+<!--             </ul> -->
+         <h4  data-fragment-index="3" class="fragment">New DB-Master</h4>
+<!--             <ul> -->
+		<li data-fragment-index="4" class="fragment"><pre><code style="font-size:24px;">mysql -e "STOP SLAVE; RESET MASTER;" </code></pre></li>
+<!--            </ul> -->
+         <h4  data-fragment-index="5" class="fragment">Other DB-Slaves &amp; Web Nodes</h4>
+<!--            <ul> -->
+		<li data-fragment-index="6" class="fragment"><pre><code style="font-size:24px;">DB-Slaves: STOP SLAVE; CHANGE MASTER TO...; START SLAVE; </code></pre></li>
+		<li data-fragment-index="7" class="fragment"><pre><code style="font-size:24px;">Web Nodes: point them to new master. </code></pre></li>
+            </ul>
+   </section>
+</section>
+
+    <section data-background-image="https://s3.amazonaws.com/media-p.slid.es/uploads/mckraken/images/436688/bckgrnd.png" data-id="7df862e05ed906548cf8f2b68f88cbc6" class="">
+	<h2>References</h2>
+            <ul>
+		<li > http://dev.mysql.com/doc/refman/5.5/en/index.html </li>
+		<li > http://dev.mysql.com/doc/refman/5.5/en/replication.html </li>
+		<li > http://www.percona.com/doc/percona-xtrabackup/2.1/howtos/setting_up_replication.html </li>
+		<li > http://www.percona.com/doc/percona-toolkit/2.1/pt-table-checksum.html </li>
+		<li > http://www.percona.com/doc/percona-toolkit/2.1/pt-table-sync.html </li>
+		<li > https://github.com/racker/rackspace-monitoring-cli </li>
+            </ul>
+    </section>
+
+    <section data-background-image="https://s3.amazonaws.com/media-p.slid.es/uploads/mckraken/images/436688/bckgrnd.png" data-id="7df862e05ed906548cf8f2b68f88cbc6" class="">
+	<h1>Thank you for your attention!</h1>
+<p>&nbsp;</p>
+	<h2>Suggestions are welcome at<br><br><a  href=mailto:steve.mccracken@rackspace.com>steve.mccracken@rackspace.com</a></h2>
+    </section>
+
+    </div>
+
+    </div>
+    <script src="lib/js/head.min.js"></script>
+    <script src="js/reveal.min.js"></script>
+ 
+    <script>
+        // Required, even if empty.
+        Reveal.initialize({
+dependencies: [
+					{ src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: 'plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+					{ src: 'plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
+				]
+        });
+    </script>
+</body>
+</html>
