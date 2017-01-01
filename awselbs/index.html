@@ -1,0 +1,179 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<title>reveal.js</title>
+
+		<link rel="stylesheet" href="css/reveal.css">
+		<link rel="stylesheet" href="css/theme/league.css">
+
+		<!-- Theme used for syntax highlighting of code -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+
+		<!-- Printing and PDF exports -->
+		<script>
+			var link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+			document.getElementsByTagName( 'head' )[0].appendChild( link );
+		</script>
+	</head>
+	<body>
+		<div class="reveal">
+			<div class="slides">
+				<section data-background-image="https://s3.amazonaws.com/media-p.slid.es/uploads/mckraken/images/436688/bckgrnd.png" data-id="7df862e05ed906548cf8f2b68f88cbc6">
+					<h2>Fanatical Support for</h2>
+					<h3>Amazon Web Services</h3>
+					<hr>
+					<h1>Elastic Load Balancers</h1>
+					<hr>
+					<p> </p>
+				</section>
+				<section data-background-image="https://s3.amazonaws.com/media-p.slid.es/uploads/mckraken/images/436688/bckgrnd.png" data-id="7df862e05ed906548cf8f2b68f88cbc6">
+					<section data-background-image="https://s3.amazonaws.com/media-p.slid.es/uploads/mckraken/images/436688/bckgrnd.png" data-id="7df862e05ed906548cf8f2b68f88cbc6">
+						<h2>ELBv1 (Classic)</h2>
+                        <hr>
+						<p>
+							This is the load balancer that we all know and love.
+						</p>
+						<p>
+
+						</p>
+						<img width="341" height="302" data-src="http://docs.aws.amazon.com/elasticloadbalancing/latest/classic/images/load_balancer.png" alt="Load Balancer Diagram">
+					</section>
+					<section data-background-image="https://s3.amazonaws.com/media-p.slid.es/uploads/mckraken/images/436688/bckgrnd.png" data-id="7df862e05ed906548cf8f2b68f88cbc6">
+						<h2>Basic Features</h2>
+						<dl>
+							<!--
+							<dt>Layer 4</dt>
+							<dd>Balances/routes based on IP address and port.</dd>
+							-->
+							<dt>Protocols</dt>
+							<dd>HTTP, HTTPS, TCP, SSL</dd>
+							<dt>Sticky Sessions</dt>
+							<dd>Either LB generated or Application Cookie based.</dd>
+							<dt>Health Checks</dt>
+							<dd>TCP, SSL, HTTP, or HTTPS with port</dd>
+							<dt>Balancing Algorithm</dt>
+							<dd>Balances across <strong>AZs</strong> unless <em>Cross-zone load balancing</em> is enabled, then balances across instances.</dd>
+							<dt>Backend Authentication Available</dt>
+							<dd>Certificate authentication on SSL connection.</dd>
+						</dl>
+					</section>
+					<section data-background-image="https://s3.amazonaws.com/media-p.slid.es/uploads/mckraken/images/436688/bckgrnd.png" data-id="7df862e05ed906548cf8f2b68f88cbc6">
+						<h2>Basement Level 2</h2>
+						<p>That's it, time to go back up.</p>
+						<br>
+						<a href="#/2">
+							<img width="178" height="238" data-src="https://s3.amazonaws.com/hakim-static/reveal-js/arrow.png" alt="Up arrow" style="transform: rotate(180deg); -webkit-transform: rotate(180deg);">
+						</a>
+					</section>
+				</section>
+				<section data-background-image="https://s3.amazonaws.com/media-p.slid.es/uploads/mckraken/images/436688/bckgrnd.png" data-id="7df862e05ed906548cf8f2b68f88cbc6">
+					<section data-background-image="https://s3.amazonaws.com/media-p.slid.es/uploads/mckraken/images/436688/bckgrnd.png" data-id="7df862e05ed906548cf8f2b68f88cbc6">
+						<h2>ELBv2 (Application Load Balancer)</h2>
+                        <hr>
+						<p>
+							This is the load balancer that we all know and love.
+						</p>
+						<p>
+
+						</p>
+						<img width="341" height="302" data-src="http://docs.aws.amazon.com/elasticloadbalancing/latest/classic/images/load_balancer.png" alt="New and Improved Load Balancer Diagram">
+						<img width="150" height="150" data-src="http://docs.aws.amazon.com/elasticloadbalancing/latest/classic/images/load_balancer.png" alt="New and Improved Load Balancer Diagram" class="fragment fade-up" align="middle" >
+					</section>
+					<section data-background-image="https://s3.amazonaws.com/media-p.slid.es/uploads/mckraken/images/436688/bckgrnd.png" data-id="7df862e05ed906548cf8f2b68f88cbc6">
+						<h2>Basement Level 1</h2>
+						<p>Nested slides are useful for adding additional detail underneath a high level horizontal slide.</p>
+					</section>
+					<section data-background-image="https://s3.amazonaws.com/media-p.slid.es/uploads/mckraken/images/436688/bckgrnd.png" data-id="7df862e05ed906548cf8f2b68f88cbc6">
+						<h2>Basement Level 2</h2>
+						<p>That's it, time to go back up.</p>
+						<br>
+						<a href="#/2">
+							<img width="178" height="238" data-src="https://s3.amazonaws.com/hakim-static/reveal-js/arrow.png" alt="Up arrow" style="transform: rotate(180deg); -webkit-transform: rotate(180deg);">
+							<img width="178" height="238" data-src="https://s3.amazonaws.com/hakim-static/reveal-js/arrow.png" alt="Up arrow" style="transform: rotate(180deg); -webkit-transform: rotate(180deg);" class="fragment fade-up"></img>
+						</a>
+					</section>
+				</section>
+				<section data-background-image="https://s3.amazonaws.com/media-p.slid.es/uploads/mckraken/images/436688/bckgrnd.png" data-id="7df862e05ed906548cf8f2b68f88cbc6">
+					<section data-background-image="https://s3.amazonaws.com/media-p.slid.es/uploads/mckraken/images/436688/bckgrnd.png" data-id="7df862e05ed906548cf8f2b68f88cbc6">
+						<h2>ELBs in CloudFormation</h2>
+                        <hr>
+						<p>Slides can be nested inside of each other.</p>
+						<p>Use the <em>Space</em> key to navigate through all slides.</p>
+						<br>
+						<a href="#" class="navigate-down">
+							<img width="178" height="238" data-src="https://s3.amazonaws.com/hakim-static/reveal-js/arrow.png" alt="Down arrow">
+						</a>
+					</section>
+					<section data-background-image="https://s3.amazonaws.com/media-p.slid.es/uploads/mckraken/images/436688/bckgrnd.png" data-id="7df862e05ed906548cf8f2b68f88cbc6">
+						<h2>Basement Level 1</h2>
+						<p>Nested slides are useful for adding additional detail underneath a high level horizontal slide.</p>
+					</section>
+					<section data-background-image="https://s3.amazonaws.com/media-p.slid.es/uploads/mckraken/images/436688/bckgrnd.png" data-id="7df862e05ed906548cf8f2b68f88cbc6">
+						<h2>Basement Level 2</h2>
+						<p>That's it, time to go back up.</p>
+						<br>
+						<a href="#/2">
+							<img width="178" height="238" data-src="https://s3.amazonaws.com/hakim-static/reveal-js/arrow.png" alt="Up arrow" style="transform: rotate(180deg); -webkit-transform: rotate(180deg);">
+						</a>
+					</section>
+				</section>
+				<section data-background-image="https://s3.amazonaws.com/media-p.slid.es/uploads/mckraken/images/436688/bckgrnd.png" data-id="7df862e05ed906548cf8f2b68f88cbc6">
+					<section data-background-image="https://s3.amazonaws.com/media-p.slid.es/uploads/mckraken/images/436688/bckgrnd.png" data-id="7df862e05ed906548cf8f2b68f88cbc6">
+						<h2>Load Balancer Headaches</h2>
+                        <hr>
+						<ul>
+                            <li>No SNI</li>
+                            <li>SSL Termination</li>
+                            <li>Health Checks</li>
+                            <li>CloudFront w/ SSL</li>
+                            <li>No SNI</li>
+                        </ul>
+						<p>Use the <em>Space</em> key to navigate through all slides.</p>
+						<br>
+						<a href="#" class="navigate-down">
+							<img width="178" height="238" data-src="https://s3.amazonaws.com/hakim-static/reveal-js/arrow.png" alt="Down arrow">
+						</a>
+					</section>
+					<section data-background-image="https://s3.amazonaws.com/media-p.slid.es/uploads/mckraken/images/436688/bckgrnd.png" data-id="7df862e05ed906548cf8f2b68f88cbc6">
+						<h2>Basement Level 1</h2>
+						<p>Nested slides are useful for adding additional detail underneath a high level horizontal slide.</p>
+					</section>
+					<section data-background-image="https://s3.amazonaws.com/media-p.slid.es/uploads/mckraken/images/436688/bckgrnd.png" data-id="7df862e05ed906548cf8f2b68f88cbc6">
+						<h2>Basement Level 2</h2>
+						<p>That's it, time to go back up.</p>
+						<br>
+						<a href="#/2">
+							<img width="178" height="238" data-src="https://s3.amazonaws.com/hakim-static/reveal-js/arrow.png" alt="Up arrow" style="transform: rotate(180deg); -webkit-transform: rotate(180deg);">
+						</a>
+					</section>
+				</section>
+
+				<section data-background-image="https://s3.amazonaws.com/media-p.slid.es/uploads/mckraken/images/436688/bckgrnd.png" data-id="7df862e05ed906548cf8f2b68f88cbc6"><h2>Comments or Questions?</h2></section>
+			</div>
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.js"></script>
+
+		<script>
+			// More info https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				history: true,
+
+				// More info https://github.com/hakimel/reveal.js#dependencies
+				dependencies: [
+					{ src: 'plugin/markdown/marked.js' },
+					{ src: 'plugin/markdown/markdown.js' },
+					{ src: 'plugin/notes/notes.js', async: true },
+					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } }
+				]
+			});
+		</script>
+	</body>
+</html>
