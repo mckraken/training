@@ -176,7 +176,7 @@
 						<h2>ELBv2 in CloudFormation</h2>
                         <hr>
                         <h3>AWS::ElasticLoadBalancingV2::LoadBalancer</h3>
-                        <aside class="notes">Removed "AvailabilityZones" as for VPCs, one should use "Subnets"</aside>
+                        <aside class="notes">Notes</aside>
 						<pre><code class="json hljs">"Properties": {
     "LoadBalancerAttributes" : [ LoadBalancerAttributes, ... ],
     "Name" : String,
@@ -190,35 +190,55 @@
 					<section data-background-image="images/bckgrnd.png">
 						<h2>ELBv2 LoadBalancer Properties</h2>
                         <aside class="notes">
-                            Stickyness:<br>
-                            - App - Application Cookie name<br>
-                            - LB - Expire Time<br>
-                            "AvailabilityZones" - for VPCs, one should use "Subnets"<br>
-                            "LoadBalancerName" if specified, can't do updates that require replacement<br>
                             "Subnets" To change to another subnet in the same az, you need to do two updates.  First to change to another az and then another one to change it back.  Also, going from 0 or to 0 subnets requires replacement.<br>
                             Replacement fuller explanation<br>
-                            * Healthcheck - Replacement for adding initial HC or removing one.<br>
-                            * Listeners - updates to listeners delete and add listeners<br>
+                            * Name - Replacement for adding initial HC or removing one.<br>
+                            * Scheme - updates to listeners delete and add listeners<br>
                             * Subnets - if adding initial subnet or removing all
                         </aside>
 						<pre>"Properties": {
-  "AccessLoggingPolicy" - S3 bucket and Interval
-  "AppCookieStickinessPolicy" - list of AppCookieStickinessPolicy objects
-  "ConnectionDrainingPolicy" - Enable and Timeout
-  "ConnectionSettings" - Idle Timeout
-<span class="fragment fade-up">  "CrossZone" - Balance across all instances regardless of AZ</span>
-<span class="fragment fade-up">- "HealthCheck" - Simple connection or HTTP(s) 200 response</span>
-<span class="fragment fade-up">  "Instances" - List of Instance IDs</span>
-  "LBCookieStickinessPolicy" - list of LBCookieStickinessPolicy objects
-<span class="fragment fade-up">* "LoadBalancerName" - Unique name</span>
-<span class="fragment fade-up">- "Listeners" - Ports and Protocols</span>
-<span class="fragment fade-up">  "Policies" - Backend Server Policies (Backend Authentication)</span>
-<span class="fragment fade-up">* "Scheme" - Internal or Public Facing</span>
-  "SecurityGroups" - List of Security Groups
-<span class="fragment fade-up">- "Subnets" - list of subnets (one per AZ)</span>
-  "Tags" - list of tags like normal
+    "LoadBalancerAttributes" - Deletion Protection/Idle Timeout
+  * "Name" - Unique alphanumeric/hyphens
+  * "Scheme" - internet-facing/internal
+    "SecurityGroups" - list of ids
+    <strong>"Subnets" - list of two or more in different AZs</strong>
+    "Tags" - list of tags like normal
 }</pre>
-                        <small><a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-ec2-elb.html" target="amazondocs">Amazon Documentation Link</a></small>
+                        <small><a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-elasticloadbalancingv2-loadbalancer.html" target="amazondocs">Amazon Documentation Link</a></small>
+					</section>
+					<section data-background-image="images/bckgrnd.png">
+						<h2>ELBv2 Additional Resources</h2>
+                        <hr>
+                        <h3>AWS::ElasticLoadBalancingV2::Listener</h3>
+                        <aside class="notes">Notes</aside>
+						<pre><code class="json hljs">"Properties": {
+    "Certificates" : [ Certificates, ... ],
+    "DefaultActions" : [ DefaultActions, ... ],
+    "LoadBalancerArn" : String,
+    "Port" : Integer,
+    "Protocol" : String,
+    "SslPolicy" : String
+}</code></pre>
+                        <small><a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-elasticloadbalancingv2-loadbalancer.html" target="amazondocs">Amazon Documentation Link</a></small>
+					</section>
+					<section data-background-image="images/bckgrnd.png">
+						<h2>ELBv2 LoadBalancer Properties</h2>
+                        <aside class="notes">
+                            "Subnets" To change to another subnet in the same az, you need to do two updates.  First to change to another az and then another one to change it back.  Also, going from 0 or to 0 subnets requires replacement.<br>
+                            Replacement fuller explanation<br>
+                            * Name - Replacement for adding initial HC or removing one.<br>
+                            * Scheme - updates to listeners delete and add listeners<br>
+                            * Subnets - if adding initial subnet or removing all
+                        </aside>
+						<pre>"Properties": {
+    "LoadBalancerAttributes" - Deletion Protection/Idle Timeout
+  * "Name" - Unique alphanumeric/hyphens
+  * "Scheme" - internet-facing/internal
+    "SecurityGroups" - list of ids
+    <strong>"Subnets" - list of two or more in different AZs</strong>
+    "Tags" - list of tags like normal
+}</pre>
+                        <small><a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-elasticloadbalancingv2-loadbalancer.html" target="amazondocs">Amazon Documentation Link</a></small>
 					</section>
 					<section data-background-image="images/bckgrnd.png">
 						<h2>Basement Level 2</h2>
