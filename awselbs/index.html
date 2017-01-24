@@ -158,7 +158,7 @@
   "ConnectionSettings" - Idle-Timeout
 <span class="fragment highlight-current-green">  "CrossZone" - Balance across all instances regardless of AZ</span>
 <span class="fragment highlight-current-green">- "HealthCheck" - Simple connection or HTTP(s) 200 response</span>
-<span class="fragment highlight-current-green">  "Instances" - List of Instance IDs</span>
+<span class="fragment highlight-current-green">  "Instances" - List of Instance IDs (ASG: LoadBalancerNames)</span>
 <span class="fragment highlight-current-green" data-fragment-index="1">  "LBCookieStickinessPolicy" - list of LBCookieStickinessPolicy objects</span>
 <span class="fragment highlight-current-green">* "LoadBalancerName" - Unique name</span>
 <span class="fragment highlight-current-green">- "Listeners" - Ports and Protocols</span>
@@ -219,10 +219,10 @@
     "Protocol" : String,
     "SslPolicy" : String
 }</code></pre>
-                        <small><a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-elasticloadbalancingv2-loadbalancer.html" target="amazondocs">Amazon Documentation Link</a></small>
+                        <small><a href="https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-elasticloadbalancingv2-listener.html" target="amazondocs">Amazon Documentation Link</a></small>
 					</section>
 					<section data-background-image="images/bckgrnd.png">
-						<h2>ELBv2 LoadBalancer Properties</h2>
+						<h2>ELBv2 Listener Properties</h2>
                         <aside class="notes">
                             "Subnets" To change to another subnet in the same az, you need to do two updates.  First to change to another az and then another one to change it back.  Also, going from 0 or to 0 subnets requires replacement.<br>
                             Replacement fuller explanation<br>
@@ -231,22 +231,103 @@
                             * Subnets - if adding initial subnet or removing all
                         </aside>
 						<pre>"Properties": {
-    "LoadBalancerAttributes" - Deletion Protection/Idle Timeout
-  * "Name" - Unique alphanumeric/hyphens
-  * "Scheme" - internet-facing/internal
-    "SecurityGroups" - list of ids
-    <strong>"Subnets" - list of two or more in different AZs</strong>
-    "Tags" - list of tags like normal
+<em><strong>    "Certificates" - List of Certificates - Required if HTTPS</strong></em>
+<strong>    "DefaultActions" - TargetGroupARN and action (only "forward" valid currently)</strong>
+<strong>  * "LoadBalancerArn" - The Associated ELB for this listener</strong>
+<strong>    "Port" - The port for the listener</strong>
+<strong>    "Protocol" - Only HTTP or HTTPS valid currently</strong>
+    "SslPolicy" - Security policy that defines ciphers and protocols
 }</pre>
-                        <small><a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-elasticloadbalancingv2-loadbalancer.html" target="amazondocs">Amazon Documentation Link</a></small>
+                        <small><a href="https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-elasticloadbalancingv2-listener.html" target="amazondocs">Amazon Documentation Link</a></small>
 					</section>
 					<section data-background-image="images/bckgrnd.png">
-						<h2>Basement Level 2</h2>
-						<p>That's it, time to go back up.</p>
-						<br>
-						<a href="#/2">
-							<img width="178" height="238" data-src="https://s3.amazonaws.com/hakim-static/reveal-js/arrow.png" alt="Up arrow" style="transform: rotate(180deg); -webkit-transform: rotate(180deg);">
-						</a>
+						<h2>ELBv2 Additional Resources</h2>
+                        <hr>
+                        <h3>AWS::ElasticLoadBalancingV2::ListenerRule</h3>
+                        <aside class="notes">Notes</aside>
+						<pre><code class="json hljs">"Properties": {
+    "Actions" : [ Actions, ... ],
+    "Conditions" : [ Conditions, ... ],
+    "ListenerArn" : String,
+    "Priority" : Integer
+}</code></pre>
+                        <small><a href="https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-elasticloadbalancingv2-listenerrule.html" target="amazondocs">Amazon Documentation Link</a></small>
+					</section>
+					<section data-background-image="images/bckgrnd.png">
+						<h2>ELBv2 ListenerRule Properties</h2>
+                        <aside class="notes">
+                            "Subnets" To change to another subnet in the same az, you need to do two updates.  First to change to another az and then another one to change it back.  Also, going from 0 or to 0 subnets requires replacement.<br>
+                            Replacement fuller explanation<br>
+                            * Name - Replacement for adding initial HC or removing one.<br>
+                            * Scheme - updates to listeners delete and add listeners<br>
+                            * Subnets - if adding initial subnet or removing all
+							Priority - Rules are evaluated in priority order, from the lowest value to the highest
+value. The default rule has the lowest priority.
+                        </aside>
+						<pre>"Properties": {
+<strong>    "Actions" - TargetGroupARN and action (only "forward" valid currently)</strong>
+<strong>    "Conditions" - Field/Value: path-pattern/URL</strong>
+<strong>  * "ListenerArn" - ELBv2 Listener ARN association</strong>
+<strong>    "Priority" - Integer (1-99999, unique within rule, lower value -> higher priority)</strong>
+}</pre>
+                        <small><a href="https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-elasticloadbalancingv2-listenerrule.html" target="amazondocs">Amazon Documentation Link</a></small>
+					</section>
+					<section data-background-image="images/bckgrnd.png">
+						<h2>ELBv2 Additional Resources</h2>
+                        <hr>
+                        <h3>AWS::ElasticLoadBalancingV2::TargetGroup</h3>
+                        <aside class="notes">Notes</aside>
+						<pre><code class="json hljs">"Properties": {
+    "HealthCheckIntervalSeconds" : Integer,
+    "HealthCheckPath" : String,
+    "HealthCheckPort" : String,
+    "HealthCheckProtocol" : String,
+    "HealthCheckTimeoutSeconds" : Integer,
+    "HealthyThresholdCount" : Integer,
+    "Matcher" : Matcher,
+    "Name" : String,
+    "Port" : Integer,
+    "Protocol" : String,
+    "Tags" : [ Resource Tag, ... ],
+    "TargetGroupAttributes" : [ TargetGroupAttributes, ... ],
+    "TargetGroupFullName" : String,
+    "Targets" : [ TargetDescription, ... ],
+    "UnhealthyThresholdCount" : Integer,
+    "VpcId" : String
+}</code></pre>
+                        <small><a href="https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-elasticloadbalancingv2-targetgroup.html" target="amazondocs">Amazon Documentation Link</a></small>
+					</section>
+					<section data-background-image="images/bckgrnd.png">
+						<h2>ELBv2 TargetGroup Properties</h2>
+                        <aside class="notes">
+                            "Subnets" To change to another subnet in the same az, you need to do two updates.  First to change to another az and then another one to change it back.  Also, going from 0 or to 0 subnets requires replacement.<br>
+                            Replacement fuller explanation<br>
+                            * Name - Replacement for adding initial HC or removing one.<br>
+                            * Scheme - updates to listeners delete and add listeners<br>
+                            * Subnets - if adding initial subnet or removing all
+							Priority - Rules are evaluated in priority order, from the lowest value to the highest
+value. The default rule has the lowest priority.
+                            Matcher - The HTTP codes. You can specify values between 200 and 399. The default value is 200. You can specify multiple values (for example, "200,202") or a range of values (for example, "200-299").
+                        </aside>
+						<pre>"Properties": {
+    "HealthCheckIntervalSeconds" - Integer,
+    "HealthCheckPath" - String,
+    "HealthCheckPort" - String,
+    "HealthCheckProtocol" - String,
+    "HealthCheckTimeoutSeconds" - Integer,
+    "HealthyThresholdCount" - Integer,
+    "Matcher" - Valid return codes
+  * "Name" - Should be less than 22 characters
+<strong>  * "Port" - Port of target</strong>
+<strong>  * "Protocol" - Protocal for target</strong>
+    "Tags" - Normal Resource Tag
+    "TargetGroupAttributes" - draining time/stickyness definition
+    "TargetGroupFullName" - String
+    "Targets" - TargetId/port (ASG: TargetGroupARNs)
+    "UnhealthyThresholdCount" - Number of failed checks
+<strong>  * "VpcId" - VPCId containing the targets</strong>
+}</pre>
+                        <small><a href="https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-elasticloadbalancingv2-targetgroup.html" target="amazondocs">Amazon Documentation Link</a></small>
 					</section>
 				</section>
 				<section data-background-image="images/bckgrnd.png">
