@@ -151,24 +151,26 @@
                             * Listeners - updates to listeners delete and add listeners<br>
                             * Subnets - if adding initial subnet or removing all
                         </aside>
-						<pre style="color:grey">"Properties": {
+						<pre>"Properties": {
   "AccessLoggingPolicy" - S3 bucket and Interval
-<span class="fragment highlight-current-green" data-fragment-index="1">  "AppCookieStickinessPolicy" - list of AppCookieStickinessPolicy objects</span>
+  "AppCookieStickinessPolicy" - list of AppCookieStickinessPolicy objects
   "ConnectionDrainingPolicy" - Enable and Timeout
   "ConnectionSettings" - Idle-Timeout
-<span class="fragment highlight-current-green">  "CrossZone" - Balance across all instances regardless of AZ</span>
-<span class="fragment highlight-current-green">- "HealthCheck" - Simple connection or HTTP(s) 200 response</span>
-<span class="fragment highlight-current-green">  "Instances" - List of Instance IDs (ASG: LoadBalancerNames)</span>
-<span class="fragment highlight-current-green" data-fragment-index="1">  "LBCookieStickinessPolicy" - list of LBCookieStickinessPolicy objects</span>
-<span class="fragment highlight-current-green">* "LoadBalancerName" - Unique name</span>
-<span class="fragment highlight-current-green">- "Listeners" - Ports and Protocols</span>
-<span class="fragment highlight-current-green">  "Policies" - Backend Server Policies (Backend Authentication)</span>
-<span class="fragment highlight-current-green">* "Scheme" - Internal or Public Facing</span>
+  "CrossZone" - Balance across all instances regardless of AZ
+- "HealthCheck" - Simple connection or HTTP(s) 200 response
+  "Instances" - List of Instance IDs (ASG: LoadBalancerNames)
+  "LBCookieStickinessPolicy" - list of LBCookieStickinessPolicy objects
+* "LoadBalancerName" - Unique name
+<strong>  "Listeners" - Ports and Protocols</strong>
+  "Policies" - Backend Server Policies (Backend Authentication)
+* "Scheme" - Internal or Public Facing
   "SecurityGroups" - List of Security Groups
-<span class="fragment highlight-current-green">- "Subnets" - list of subnets (one per AZ)</span>
+- "Subnets" - list of subnets (one per AZ)
   "Tags" - list of tags like normal
 }</pre>
-                        <small><a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-ec2-elb.html" target="amazondocs">Amazon Documentation Link</a></small>
+                        <small style="font-size: 0.5em">
+							Bold: Required, *: Replacement, -: Conditional Replacement<br>
+							<a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-ec2-elb.html" target="amazondocs">Amazon Documentation Link</a></small>
 					</section>
 				</section>
 				<section data-background-image="images/bckgrnd.png">
@@ -204,7 +206,9 @@
     <strong>"Subnets" - list of two or more in different AZs</strong>
     "Tags" - list of tags like normal
 }</pre>
-                        <small><a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-elasticloadbalancingv2-loadbalancer.html" target="amazondocs">Amazon Documentation Link</a></small>
+                        <small style="font-size: 0.5em">
+							Bold: Required, *: Replacement, -: Conditional Replacement<br>
+							<a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-elasticloadbalancingv2-loadbalancer.html" target="amazondocs">Amazon Documentation Link</a></small>
 					</section>
 					<section data-background-image="images/bckgrnd.png">
 						<h2>ELBv2 Additional Resources</h2>
@@ -238,7 +242,9 @@
 <strong>    "Protocol" - Only HTTP or HTTPS valid currently</strong>
     "SslPolicy" - Security policy that defines ciphers and protocols
 }</pre>
-                        <small><a href="https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-elasticloadbalancingv2-listener.html" target="amazondocs">Amazon Documentation Link</a></small>
+                        <small style="font-size: 0.5em">
+							Bold: Required, *: Replacement, -: Conditional Replacement<br>
+							<a href="https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-elasticloadbalancingv2-listener.html" target="amazondocs">Amazon Documentation Link</a></small>
 					</section>
 					<section data-background-image="images/bckgrnd.png">
 						<h2>ELBv2 Additional Resources</h2>
@@ -270,7 +276,9 @@ value. The default rule has the lowest priority.
 <strong>  * "ListenerArn" - ELBv2 Listener ARN association</strong>
 <strong>    "Priority" - Integer (1-99999, unique within rule, lower value -> higher priority)</strong>
 }</pre>
-                        <small><a href="https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-elasticloadbalancingv2-listenerrule.html" target="amazondocs">Amazon Documentation Link</a></small>
+                        <small style="font-size: 0.5em">
+							Bold: Required, *: Replacement, -: Conditional Replacement<br>
+							<a href="https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-elasticloadbalancingv2-listenerrule.html" target="amazondocs">Amazon Documentation Link</a></small>
 					</section>
 					<section data-background-image="images/bckgrnd.png">
 						<h2>ELBv2 Additional Resources</h2>
@@ -327,7 +335,9 @@ value. The default rule has the lowest priority.
     "UnhealthyThresholdCount" - Number of failed checks
 <strong>  * "VpcId" - VPCId containing the targets</strong>
 }</pre>
-                        <small><a href="https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-elasticloadbalancingv2-targetgroup.html" target="amazondocs">Amazon Documentation Link</a></small>
+                        <small style="font-size: 0.5em">
+							Bold: Required, *: Replacement, -: Conditional Replacement<br>
+							<a href="https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-elasticloadbalancingv2-targetgroup.html" target="amazondocs">Amazon Documentation Link</a></small>
 					</section>
 				</section>
 				<section data-background-image="images/bckgrnd.png">
@@ -339,17 +349,24 @@ value. The default rule has the lowest priority.
                             <li>SSL Termination</li>
                             <li>Health Checks</li>
                             <li>CloudFront w/ SSL</li>
-                            <li>No SNI</li>
                         </ul>
-						<p>Use the <em>Space</em> key to navigate through all slides.</p>
-						<br>
-						<a href="#" class="navigate-down">
-							<img width="178" height="238" data-src="https://s3.amazonaws.com/hakim-static/reveal-js/arrow.png" alt="Down arrow">
-						</a>
+
 					</section>
 					<section data-background-image="images/bckgrnd.png">
-						<h2>Basement Level 1</h2>
-						<p>Nested slides are useful for adding additional detail underneath a high level horizontal slide.</p>
+						<h2>No SNI</h2>
+                        <hr>
+						<p style="text-align:left">
+							While SNI is a nice thing to have on a server where one needs to know
+							which vhost to serve, the ELB is just blindly forwarding on the connection.
+							The way to resolve this in AWS is to use AWS Certificate Manager (ACM) to
+							provision free certificates covering the needed domain names<sup style="font-size: 0.5em">[1]</sup> or import a
+							multi-domain certificate into IAM.
+						</p>
+						<p style="text-align:left">
+							Or you can go "cloudy" and provision separate, smaller environments per domain.
+						</p>
+
+						<span style="font-size: 0.75em"><sup style="font-size: 0.75em">[1]</sup><a href="http://docs.aws.amazon.com/acm/latest/userguide/acm-limits.html" target="amazondocs"> AWS Certificate Manager Limits</a></span>
 					</section>
 					<section data-background-image="images/bckgrnd.png">
 						<h2>Basement Level 2</h2>
