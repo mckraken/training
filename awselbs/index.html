@@ -422,13 +422,98 @@ value. The default rule has the lowest priority.
 					</section>
 				</section>
 				<section data-background-image="images/bckgrnd.png">
+					<section data-background-image="images/bckgrnd.png">
+						<h2>Common Scenarios</h2>
+                        <hr>
+						<ul>
+                            <li>Magento - ELBv1</li>
+                            <li>Magento - ELBv2</li>
+                            <li>Wordpress</li>
+                            <li>CloudFront w/ SSL</li>
+                        </ul>
+
+					</section>
+					<section data-background-image="images/bckgrnd.png">
+						<h2>Magento - ELBv1</h2>
+                        <hr>
+						<aside class="notes">
+							While SNI is a nice thing to have on a server where one needs to know
+							which vhost to serve, the ELB is just blindly forwarding on the connection.
+						</aside>
+						<p style="text-align:left">
+							The way to resolve this in AWS is to use AWS Certificate Manager (ACM) to
+							provision free certificates covering the needed domain names
+							<sup style="font-size: 0.5em">[1]</sup> or import a
+							multi-domain certificate into IAM.
+						</p>
+						<p style="text-align:left">
+							Or you can go "cloudy" and provision separate, smaller environments per domain.
+						</p>
+
+						<span style="font-size: 0.75em"><sup style="font-size: 0.75em">[1]</sup><a href="http://docs.aws.amazon.com/acm/latest/userguide/acm-limits.html" target="amazondocs"> AWS Certificate Manager Limits</a></span>
+					</section>
+					<section data-background-image="images/bckgrnd.png">
+						<h2>Magento - ELBv2</h2>
+                        <hr>
+						<aside class="notes">
+							While SNI is a nice thing to have on a server where one needs to know
+							which vhost to serve, the ELB is just blindly forwarding on the connection.
+						</aside>
+						<dl>
+							<dt>HTTPS:443 -> HTTP:80</dt>
+							<dd>This would be the standard. The backend needs to be able to recognize the X-Forwarded-Proto header and act on that rather than the actual connection protocol.</dd>
+							<dt>HTTPS:443 -> HTTP:443</dt>
+							<dd>Needs two SSL handshakes and certificates.<br>
+								(ELBv1 only) Can do authenticated backend connection.</dd>
+							<dt>TCP:443 -> TCP:443</dt>
+							<dd>(ELBv1 only) Straight pass-through of the connection.</dd>
+						</dl>
+					</section>
+					<section data-background-image="images/bckgrnd.png">
+						<h2>Wordpress</h2>
+                        <hr>
+						<aside class="notes">
+							While SNI is a nice thing to have on a server where one needs to know
+							which vhost to serve, the ELB is just blindly forwarding on the connection.
+						</aside>
+						<dl>
+							<dt>ELBv1 - TCP</dt>
+							<dd>Simple connection check.</dd>
+							<dt>ELBv1 - HTTP(S)</dt>
+							<dd>Requires response code of 200.</dd>
+							<dt>TargetGroup (ELBv2) - HTTP(S)</dt>
+							<dd>Configurable response codes in the range 200-399.</dd>
+						</dl>
+						<p style="font-size: 0.75em">
+							<a href="http://docs.aws.amazon.com/elasticloadbalancing/latest/classic/ts-elb-healthcheck.html" target="amazondocs">ELBv1 Health Check Troubleshooting</a><br>
+							<a href="http://docs.aws.amazon.com/elasticloadbalancing/latest/application/target-group-health-checks.html" target="amazondocs">Target Group Health Checks</a>
+						</p>
+					</section>
+					<section data-background-image="images/bckgrnd.png">
+						<h2>Cloudfront with SSL</h2>
+                        <hr>
+						<aside class="notes">
+							While SNI is a nice thing to have on a server where one needs to know
+							which vhost to serve, the ELB is just blindly forwarding on the connection.
+						</aside>
+						<p style="text-align:left">
+							If HTTPS is used between Cloudfront and the ELB, the SSL certificate on the ELB needs to cover the <em>origin</em> domain name or, if the host header is forwarded through Cloudfront, the original request's domain.
+						</p>
+						<span style="font-size: 0.75em"><a href="http://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/using-https-cloudfront-to-custom-origin.html#using-https-cloudfront-to-origin-certificate" target="amazondocs">AWS Documentation Link</a></span>
+					</section>
+				</section>
+				<section data-background-image="images/bckgrnd.png">
 					<h2>Comments or Questions?</h2>
 				</section>
 				<section data-background-image="images/bckgrnd.png">
 					<h2>References</h2>
-					<p><small>
-						<a href="http://docs.aws.amazon.com/elasticloadbalancing/latest/userguide/what-is-load-balancing.html#elb-features" target="amazondocs">http://docs.aws.amazon.com/elasticloadbalancing/latest/userguide/what-is-load-balancing.html</a>
-					</small></p>
+					<p style="font-size: 1.0em">
+						<a href="http://docs.aws.amazon.com/elasticloadbalancing/latest/userguide/what-is-load-balancing.html#elb-features" target="amazondocs">Load Balancing Overview</a>
+<br>
+						<a href="http://docs.aws.amazon.com/elasticloadbalancing/latest/classic/introduction.html" target="amazondocs">ELBv1 Documentation</a>
+<br>
+						<a href="http://docs.aws.amazon.com/elasticloadbalancing/latest/application/introduction.html" target="amazondocs">ELBv2 Documentation</a>
+					</p>
 				</section>
 			</div>
 		</div>
